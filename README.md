@@ -6,6 +6,9 @@ run js-notebook
     npm install
     node ./index.js
 
+open web browser and go to the link
+http://localhost:1337/
+
 Sample Code
 
     book.text('hello');
