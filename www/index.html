@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="/node_modules/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            overflow: hidden
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <v-app id="inspire">
+            <v-toolbar color="red" dense fixed clipped-left app>
+                <v-toolbar-title class="mr-5 align-center">
+                    <span class="title">JS Notebook
+                    </span>
+                </v-toolbar-title>
+                <v-btn flat small color="white" @click="runCode()">Run</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn flat small @click="openFile()">Open</v-btn>
+                <v-btn flat small @click="saveFile()">Save</v-btn>
+            </v-toolbar>
+            <v-content>
+                <v-container fluid fill-height style="padding:0;margin: 0;">
+                    <v-layout row>
+                        <v-flex xs6 style=" padding-bottom:50px">
+                            <pre id="editor" style="height:100%">
+book.text('hello');
+book.json({value:'hello'});
+book.html("<h1>hello</h1>");
+book.image('http://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg');
+
+book.http({
+    method: 'post',
+    url: 'http://localhost:1337/api/hello',
+    data: {'name':'name'},
+    params:{},
+    headers:{}
+}).then(function (response) {
+    book.json(response.data);
+});
+
+
+book.http({
+    method: 'post',
+    url: 'https://southeastasia.api.cognitive.microsoft.com//vision/v2.0/analyze',
+    params:{
+        "visualFeatures": "Categories,Description,Color",
+        "details": "",
+        "language": "en",
+    },
+    headers: {
+        "Content-Type":"application/json",
+        "Ocp-Apim-Subscription-Key": ''
+    },
+    data: {"url": "http://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg"},
+}).then(function (response) {
+    results.push(['object',response.data]);
+});
+     
+
+
+</pre>
+                        </v-flex>
+                        <v-flex xs6 style="height:100vh; overflow:auto; padding-bottom:50px">
+                            <v-list two-line class="">
+                                <div style="margin:10px">
+                                    <template v-for="(item, index) in results">
+                                        <!-- <v-list-tile :key="index">
+                                            <v-list-tile-content>
+                                                <v-list-tile-title>{{ index }}</v-list-tile-title>
+                                                <v-list-tile-sub-title class="text--primary" v-html="item">
+                                                
+                                                </v-list-tile-sub-title>
+                                            </v-list-tile-content>
+                                        </v-list-tile> -->
+                                        <template v-if="Array.isArray(item)">
+                                            <div style="margin:10px" v-if="item.length==1">{{item[0]}}</div>
+                                            <template v-else-if="item.length==2">
+                                                <div style="margin:10px" v-if="item[0]=='text'">{{item[1]}}</div>
+                                                <div style="margin:10px" v-else-if="item[0]=='html'" v-html="item[1]"></div>
+                                                <div style="margin:10px" v-else-if="item[0]=='object'"><pre>{{JSON.stringify(item[1], null, 4) }}</pre></div>
+                                                <div style="margin:10px" v-else-if="item[0]=='image'"><img style="width:100%" :src="item[1]"/></div>
+                                                <div style="margin:10px" v-else>{{item}}</div>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <div style="margin:10px">{{item}}</div>
+                                        </template>
+                                        <v-divider :key="`divider-${index}`"></v-divider>
+                                    </template>
+                                </div>
+                            </v-list>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+
+            </v-content>
+
+            <cameradialog ref="cameradialog"></cameradialog>
+
+            <v-dialog v-model="cameraDialog" max-width="290">
+                <v-card>
+                    <v-card-title class="headline">Use Google's location service?</v-card-title>
+
+                    <v-card-text>
+                        Let Google help apps determine location. This means sending anonymous location data to Google,
+                        even when no apps are running.
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+
+                        <v-btn color="green darken-1" flat="flat" @click="refs.closeCamera()">
+                            Disagree
+                        </v-btn>
+
+                        <v-btn color="green darken-1" flat="flat" @click="refs.closeCamera()">
+                            Agree
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-app>
+
+        <input type="file" id="file-input" style="display:none">
+    </div>
+
+
+
+
+    <script src="/node_modules/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/node_modules/vue/dist/vue.min.js"></script>
+    <script src="/node_modules/vuetify/dist/vuetify.min.js"></script>
+    <script src="/node_modules/vue-router/dist/vue-router.min.js"></script>
+    <script src="/node_modules/vuex/dist/vuex.min.js"></script>
+    <script src="/node_modules/babel-standalone/babel.min.js" charset="utf-8"></script>
+    <script src="/node_modules/axios/dist/axios.min.js"></script>
+
+    <script src="script/cameradialog.js" type="text/babel"></script>
+    <script src="script/store.js" type="text/babel"></script>
+    <!-- <script src="script/router.js" type="text/babel"></script> -->
+    <script src="script/FileSaver.js"></script>
+    <script src="script/index.js" type="text/babel"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+
+
+
+
+
+
+
+</body>
+
+</html>
